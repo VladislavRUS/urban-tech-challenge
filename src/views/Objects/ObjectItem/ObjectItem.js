@@ -12,9 +12,9 @@ import locationIcon from '../../../assets/icons/location.png';
 import timeIcon from '../../../assets/icons/time.png';
 
 const ObjectItem = props => (
-  <Card>
+  <Card onPress={props.onPress}>
     <Header>
-      <HeaderText>{props.name}</HeaderText>
+      <HeaderText>{props.customer}</HeaderText>
     </Header>
     <Body>
       <MarkerWrapper>

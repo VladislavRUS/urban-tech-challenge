@@ -6,3 +6,4 @@ export const TASKS_NAVIGATOR = 'TasksNavigator';
 export const AUTH = 'Auth';
 export const PROFILE = 'Profile';
 export const OBJECTS = 'Objects';
+export const OBJECT_DETAILED = 'ObjectDetailed';

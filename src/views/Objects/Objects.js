@@ -1,15 +1,8 @@
 import React from 'react';
 import { Wrapper, ObjectWrapper } from './Objects.styles';
 import ObjectItem from './ObjectItem';
-
-const objects = [
-  {
-    id: 1,
-    name: 'ГУП «Я взял твою бу»',
-    expirationDate: '02.02.2019',
-    address: 'ул. Большая Акиманка, 19'
-  }
-];
+import * as Routes from '../../constants/routes';
+import Store from '../../store';
 
 class Objects extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -24,13 +17,21 @@ class Objects extends React.Component {
     };
   };
 
+  onPress = object => {
+    const { navigation } = this.props;
+
+    Store.setCurrentObjectId(object.id);
+    navigation.navigate(Routes.OBJECT_DETAILED);
+  };
+
   render() {
     return (
       <Wrapper>
-        {objects.map(object => (
+        {Store.objects.map(object => (
           <ObjectWrapper key={object.id}>
             <ObjectItem
-              name={object.name}
+              onPress={() => this.onPress(object)}
+              customer={object.customer}
               address={object.address}
               expirationDate={object.expirationDate}
             />
