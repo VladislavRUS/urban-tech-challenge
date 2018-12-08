@@ -52,7 +52,9 @@ class ObjectDetailed extends React.Component {
   };
 
   onAttach = () => {
-    console.log('Attach');
+    const { navigation } = this.props;
+
+    navigation.navigate(Routes.ATTACHES);
   };
 
   render() {

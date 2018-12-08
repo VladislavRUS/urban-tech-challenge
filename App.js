@@ -10,6 +10,7 @@ import Objects from './src/views/Objects';
 import * as Routes from './src/constants/routes';
 import ObjectDetailed from './src/views/ObjectDetailed';
 import Comment from './src/views/Comment';
+import Attaches from './src/views/Attaches';
 
 const AuthNavigator = createStackNavigator({
   Auth
@@ -26,7 +27,8 @@ ProfileNavigator.navigationOptions = ({ navigation }) => ({
 const TasksNavigator = createStackNavigator({
   Objects,
   ObjectDetailed,
-  Comment
+  Comment,
+  Attaches
 });
 
 TasksNavigator.navigationOptions = ({ navigation }) => ({

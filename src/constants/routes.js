@@ -8,3 +8,4 @@ export const PROFILE = 'Profile';
 export const OBJECTS = 'Objects';
 export const OBJECT_DETAILED = 'ObjectDetailed';
 export const COMMENT = 'Comment';
+export const ATTACHES = 'Attaches';
