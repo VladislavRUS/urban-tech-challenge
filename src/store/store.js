@@ -1,4 +1,10 @@
-import { types } from 'mobx-state-tree';
+import { types, flow } from 'mobx-state-tree';
+import axios from 'axios';
+
+// const API_HOST = 'http://192.168.0.11:3000';
+const API_HOST = 'http://192.168.0.14:3000';
+const GET_EMPLOYEES_AND_TASKS = '/api/employees_and_tasks';
+const UPLOAD_FILE = '/api/mobile/22/attaches';
 
 const CheckObject = types.model({
   id: types.number,
@@ -32,7 +38,31 @@ const Store = types
     },
     saveComment(comment) {
       self.comment = comment;
-    }
+    },
+    uploadImage: flow(function*({ uri }) {
+      const url = API_HOST + UPLOAD_FILE;
+
+      let uriParts = uri.split('.');
+      let fileType = uriParts[uriParts.length - 1];
+
+      let formData = new FormData();
+      formData.append('attach', {
+        uri,
+        name: `attach.${fileType}`,
+        type: `image/${fileType}`
+      });
+
+      let options = {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+
+      yield fetch(url, options);
+    })
   }))
   .create({
     objects: [

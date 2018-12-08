@@ -39,11 +39,21 @@ export const Title = styled.Text`
   font-weight: 500;
 `;
 
-export const Actions = styled.View`
+export const Actions = styled.TouchableOpacity`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   margin-left: auto;
 `;
 
-export const PlusIconWrapper = styled.TouchableOpacity`
+export const ActionTitle = styled.Text`
+  margin-right: 7px;
+  color: #5d5d5d;
+  font-size: 12px;
+  font-weight: 300;
+`;
+
+export const PlusIconWrapper = styled.View`
   width: 12px;
   height: 12px;
 `;
