@@ -23,11 +23,15 @@ const Store = types
   .model({
     currentObjectId: types.maybe(types.number),
     objects: types.maybe(types.array(CheckObject)),
-    attaches: types.maybe(types.array(Attach))
+    attaches: types.maybe(types.array(Attach)),
+    comment: types.maybe(types.string)
   })
   .actions(self => ({
     setCurrentObjectId(id) {
       self.currentObjectId = id;
+    },
+    saveComment(comment) {
+      self.comment = comment;
     }
   }))
   .create({
@@ -50,7 +54,8 @@ const Store = types
         url:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kitten_in_Rizal_Park%2C_Manila.jpg/230px-Kitten_in_Rizal_Park%2C_Manila.jpg'
       }
-    ]
+    ],
+    comment: 'Это мой супер коммент'
   });
 
 export default Store;

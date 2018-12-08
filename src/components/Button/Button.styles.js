@@ -7,7 +7,7 @@ export const Wrapper = styled.TouchableOpacity`
   justify-content: center;
   height: 40px;
   border-radius: 20px;
-  background-color: #c73433;
+  background-color: ${props => props.color || '#c73433'};
 `;
 
 export const Text = styled.Text`

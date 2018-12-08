@@ -17,6 +17,7 @@ import commentIcon from '../../assets/icons/comment.png';
 import attachIcon from '../../assets/icons/attach.png';
 import { computed } from 'mobx';
 import Detail from './Detail';
+import * as Routes from '../../constants/routes';
 
 class ObjectDetailed extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -45,7 +46,9 @@ class ObjectDetailed extends React.Component {
   }
 
   onComment = () => {
-    console.log('Comment');
+    const { navigation } = this.props;
+
+    navigation.navigate(Routes.COMMENT);
   };
 
   onAttach = () => {
