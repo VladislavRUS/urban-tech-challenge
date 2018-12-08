@@ -6,7 +6,7 @@ import {
 } from 'react-navigation';
 import Auth from './src/views/Auth';
 import Profile from './src/views/Profile';
-import Contracts from './src/views/Contracts';
+import Objects from './src/views/Objects';
 import * as Routes from './src/constants/routes';
 
 const AuthNavigator = createStackNavigator({
@@ -21,21 +21,21 @@ ProfileNavigator.navigationOptions = ({ navigation }) => ({
   title: 'Профиль'
 });
 
-const ContractsNavigator = createStackNavigator({
-  Contracts
+const TasksNavigator = createStackNavigator({
+  Objects
 });
 
-ContractsNavigator.navigationOptions = ({ navigation }) => ({
-  title: 'Контракты'
+TasksNavigator.navigationOptions = ({ navigation }) => ({
+  title: 'Задачи'
 });
 
 const MainNavigator = createBottomTabNavigator(
   {
     ProfileNavigator,
-    ContractsNavigator
+    TasksNavigator
   },
   {
-    initialRouteName: Routes.PROFILE_NAVIGATOR
+    initialRouteName: Routes.TASKS_NAVIGATOR
   }
 );
 

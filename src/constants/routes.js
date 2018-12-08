@@ -1,8 +1,8 @@
 export const MAIN_NAVIGATOR = 'MainNavigator';
 export const AUTH_NAVIGATOR = 'AuthNavigator';
 export const PROFILE_NAVIGATOR = 'ProfileNavigator';
-export const CONTRACTS_NAVIGATOR = 'ContractsNavigator';
+export const TASKS_NAVIGATOR = 'TasksNavigator';
 
 export const AUTH = 'Auth';
 export const PROFILE = 'Profile';
-export const CONTRACTS = 'Contracts';
+export const OBJECTS = 'Objects';
