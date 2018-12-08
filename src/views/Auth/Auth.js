@@ -1,4 +1,6 @@
 import React from 'react';
+import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 import {
   Wrapper,
   BackgroundImage,
@@ -14,8 +16,7 @@ import lockIcon from '../../assets/icons/lock.png';
 import userIcon from '../../assets/icons/user.png';
 import moscowImage from '../../assets/images/moscow.png';
 
-import { observer } from 'mobx-react';
-import { observable } from 'mobx';
+import * as Routes from '../../constants/routes';
 
 @observer
 class Auth extends React.Component {
@@ -23,6 +24,8 @@ class Auth extends React.Component {
     header: null
   };
 
+  @observable
+  loaderTimeout = null;
   @observable
   login = 'kurochkin@gku.ru';
   @observable
@@ -41,10 +44,15 @@ class Auth extends React.Component {
   onSubmit = () => {
     this.isLoading = true;
 
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 1500);
+    this.loaderTimeout = setTimeout(() => {
+      const { navigation } = this.props;
+      navigation.navigate(Routes.MAIN_NAVIGATOR);
+    }, 1000);
   };
+
+  componentWillUnmount() {
+    clearTimeout(this.loaderTimeout);
+  }
 
   render() {
     return (
