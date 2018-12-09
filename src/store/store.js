@@ -1,10 +1,11 @@
 import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
 
-// const API_HOST = 'http://192.168.0.11:3000';
-const API_HOST = 'http://localhost:5000';
+const API_HOST = 'http://024f5f65.ngrok.io';
+// const API_HOST = 'http://localhost:5000';
 const UPLOAD_FILE = '/api/mobile/22/attaches';
 const GET_CONTRACTS = '/api/users/{userId}/contracts';
+const FINISH = '/api/contracts/finish';
 
 export const ATTACH_TYPES = {
   IMAGE: 'image',
@@ -86,6 +87,18 @@ const Store = types
       };
 
       yield fetch(url, options);
+    }),
+    finish: flow(function*(contract, status) {
+      const url = API_HOST + FINISH;
+
+      const data = {
+        contract,
+        status
+      };
+
+      yield axios.post(url, {
+        data
+      });
     })
   }))
   .create({

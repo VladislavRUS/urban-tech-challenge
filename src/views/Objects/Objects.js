@@ -1,9 +1,9 @@
 import React from 'react';
-import { Wrapper, ObjectWrapper, List } from './Objects.styles';
+import { ObjectWrapper, List } from './Objects.styles';
 import ObjectItem from './ObjectItem';
 import * as Routes from '../../constants/routes';
 import Store from '../../store';
-import { observable } from 'mobx';
+import { computed, observable } from 'mobx';
 import { observer } from 'mobx-react';
 
 @observer
@@ -24,6 +24,11 @@ class Objects extends React.Component {
   isLoading = false;
   @observable
   isInitialized = false;
+
+  @computed
+  get contracts() {
+    return Store.contracts;
+  }
 
   componentDidMount() {
     this.init();
@@ -46,14 +51,16 @@ class Objects extends React.Component {
     const { navigation } = this.props;
 
     Store.setCurrentObjectId(object.id);
-    navigation.navigate(Routes.OBJECT_DETAILED);
+    navigation.navigate(Routes.OBJECT_DETAILED, {
+      onGoBack: this.init
+    });
   };
 
   render() {
     return (
       <List
         contentContainerStyle={{ alignSelf: 'stretch', padding: 15 }}
-        data={Store.contracts}
+        data={this.contracts}
         refreshing={this.isLoading}
         keyExtractor={(item, index) => index.toString()}
         onRefresh={() => this.init()}

@@ -38,3 +38,8 @@ export const Subject = styled.Text`
 export const DetailWrapper = styled.View`
   margin-bottom: 13px;
 `;
+
+export const Option = styled.Text`
+  text-align: center;
+  font-size: 12px;
+`;
