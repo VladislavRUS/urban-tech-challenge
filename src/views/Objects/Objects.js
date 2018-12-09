@@ -1,9 +1,12 @@
 import React from 'react';
-import { Wrapper, ObjectWrapper } from './Objects.styles';
+import { Wrapper, ObjectWrapper, List } from './Objects.styles';
 import ObjectItem from './ObjectItem';
 import * as Routes from '../../constants/routes';
 import Store from '../../store';
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
 
+@observer
 class Objects extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -17,6 +20,28 @@ class Objects extends React.Component {
     };
   };
 
+  @observable
+  isLoading = false;
+  @observable
+  isInitialized = false;
+
+  componentDidMount() {
+    this.init();
+  }
+
+  init = async () => {
+    this.isLoading = true;
+
+    try {
+      await Store.getContracts();
+      this.isInitialized = true;
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.isLoading = false;
+    }
+  };
+
   onPress = object => {
     const { navigation } = this.props;
 
@@ -26,18 +51,23 @@ class Objects extends React.Component {
 
   render() {
     return (
-      <Wrapper>
-        {Store.objects.map(object => (
-          <ObjectWrapper key={object.id}>
+      <List
+        contentContainerStyle={{ alignSelf: 'stretch', padding: 15 }}
+        data={Store.contracts}
+        refreshing={this.isLoading}
+        keyExtractor={(item, index) => index.toString()}
+        onRefresh={() => this.init()}
+        renderItem={({ item }) => (
+          <ObjectWrapper>
             <ObjectItem
-              onPress={() => this.onPress(object)}
-              customer={object.customer}
-              address={object.address}
-              expirationDate={object.expirationDate}
+              onPress={() => this.onPress(item)}
+              customer={item.customer}
+              address={item.address}
+              expirationDate={item.expirationDate}
             />
           </ObjectWrapper>
-        ))}
-      </Wrapper>
+        )}
+      />
     );
   }
 }

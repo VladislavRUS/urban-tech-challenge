@@ -2,9 +2,14 @@ import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
 
 // const API_HOST = 'http://192.168.0.11:3000';
-const API_HOST = 'http://192.168.0.14:3000';
-const GET_EMPLOYEES_AND_TASKS = '/api/employees_and_tasks';
+const API_HOST = 'http://localhost:5000';
 const UPLOAD_FILE = '/api/mobile/22/attaches';
+const GET_CONTRACTS = '/api/users/{userId}/contracts';
+
+export const ATTACH_TYPES = {
+  IMAGE: 'image',
+  AUDIO: 'audio'
+};
 
 const CheckObject = types.model({
   id: types.number,
@@ -20,17 +25,26 @@ const Attach = types.model({
   url: types.string
 });
 
-export const ATTACH_TYPES = {
-  IMAGE: 'image',
-  AUDIO: 'audio'
-};
+const Contract = types.model({
+  number: types.string,
+  customer: types.string,
+  subject: types.string,
+  cost: types.string,
+  troubles: types.string,
+  address: types.maybe(types.string),
+  latitude: types.string,
+  longitude: types.string,
+  expirationDate: types.string
+});
 
 const Store = types
   .model({
     currentObjectId: types.maybe(types.number),
     objects: types.maybe(types.array(CheckObject)),
     attaches: types.maybe(types.array(Attach)),
-    comment: types.maybe(types.string)
+    comment: types.maybe(types.string),
+    contracts: types.maybe(types.array(Contract)),
+    userId: types.maybe(types.string)
   })
   .actions(self => ({
     setCurrentObjectId(id) {
@@ -39,6 +53,16 @@ const Store = types
     saveComment(comment) {
       self.comment = comment;
     },
+    getContracts: flow(function*() {
+      const url = API_HOST + GET_CONTRACTS.replace('{userId}', self.userId);
+
+      const response = yield axios.get(url);
+      const contracts = response.data;
+
+      Store.contracts = contracts.map(contract =>
+        Contract.create({ ...contract, cost: contract.cost.toString() })
+      );
+    }),
     uploadImage: flow(function*({ uri }) {
       const url = API_HOST + UPLOAD_FILE;
 
@@ -85,7 +109,8 @@ const Store = types
           'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kitten_in_Rizal_Park%2C_Manila.jpg/230px-Kitten_in_Rizal_Park%2C_Manila.jpg'
       }
     ],
-    comment: 'Это мой супер коммент'
+    comment: 'Это мой супер коммент',
+    userId: '123qwe'
   });
 
 export default Store;
