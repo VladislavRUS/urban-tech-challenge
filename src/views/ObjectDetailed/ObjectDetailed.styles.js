@@ -43,3 +43,10 @@ export const Option = styled.Text`
   text-align: center;
   font-size: 12px;
 `;
+
+export const WebViewWrapper = styled.View`
+  flex: 1;
+  height: 300px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+`;

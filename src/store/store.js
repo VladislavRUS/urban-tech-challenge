@@ -1,7 +1,7 @@
 import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
 
-const API_HOST = 'http://024f5f65.ngrok.io';
+const API_HOST = 'http://192.168.0.13:5000';
 // const API_HOST = 'http://localhost:5000';
 const UPLOAD_FILE = '/api/mobile/22/attaches';
 const GET_CONTRACTS = '/api/users/{userId}/contracts';
@@ -95,6 +95,8 @@ const Store = types
         contract,
         status
       };
+
+      console.log(contract);
 
       yield axios.post(url, {
         data

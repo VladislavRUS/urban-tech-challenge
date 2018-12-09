@@ -7,8 +7,10 @@ import {
   SubjectTitle,
   Subject,
   DetailWrapper,
-  Option
+  Option,
+  WebViewWrapper
 } from './ObjectDetailed.styles';
+import { WebView } from 'react-native';
 import Store from '../../store';
 import Card from '../../components/Card';
 import Marker from '../../components/Marker';
@@ -22,6 +24,7 @@ import * as Routes from '../../constants/routes';
 import Button from '../../components/Button';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet';
 import { observer } from 'mobx-react';
+import  { html } from './html';
 
 const options = [
   'Замечаний не обнаружено',
@@ -114,10 +117,25 @@ class ObjectDetailed extends React.Component {
   render() {
     const { object } = this;
 
+    const htmlWithCoords = html
+      .replace('$marker.latitude', this.object.latitude)
+      .replace('$marker.longitude', this.object.longitude)
+      .replace('{secondLatitude}', this.object.latitude)
+      .replace('{secondLongitude}', this.object.longitude);
+
+      console.log(this.object);
+      
     return (
-      <Wrapper>
+      <Wrapper contentContainerStyle={{paddingBottom: 30}}>
         {this.object && (
           <Card activeOpacity={1}>
+          <WebViewWrapper>
+            <WebView 
+                originWhitelist={['*']}
+                style={{ width: '100%', height: '100%' }} 
+                source={{ html: htmlWithCoords }}/>
+          </WebViewWrapper>
+            
             <Header>
               <MarkerWrapper>
                 <Marker
@@ -160,6 +178,8 @@ class ObjectDetailed extends React.Component {
                 onPress={this.onEndPress}
               />
             </Body>
+
+            
           </Card>
         )}
 
