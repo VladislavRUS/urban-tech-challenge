@@ -4,6 +4,7 @@
     "slug": "gku",
     "privacy": "public",
     "sdkVersion": "31.0.0",
+    "icon": "./icon.png",
     "platforms": [
       "ios",
       "android"
@@ -20,7 +21,11 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.frontguys.gku"
+      "package": "com.frontguys.gku",
+      "permissions": [
+        "CAMERA",
+        "CAMERA_ROLL"
+      ]
     }
   }
 }
