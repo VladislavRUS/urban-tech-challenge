@@ -1,7 +1,7 @@
 import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
 
-export const API_HOST = 'http://192.168.0.189:5000';
+export const API_HOST = 'http://vlku0505.ru:5002';
 const ATTACH_FILE = '/api/contracts/{contractId}/attachFile';
 const GET_COMBINATIONS = '/api/combinations';
 const GET_USERS = '/api/users';
