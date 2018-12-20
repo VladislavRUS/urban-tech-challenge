@@ -27,7 +27,7 @@ class Objects extends React.Component {
 
   @computed
   get contracts() {
-    return Store.contracts;
+    return Store.contracts || [];
   }
 
   componentDidMount() {
@@ -51,6 +51,7 @@ class Objects extends React.Component {
     const { navigation } = this.props;
 
     Store.setCurrentObjectId(object.id);
+
     navigation.navigate(Routes.OBJECT_DETAILED, {
       onGoBack: this.init
     });
@@ -60,7 +61,7 @@ class Objects extends React.Component {
     return (
       <List
         contentContainerStyle={{ alignSelf: 'stretch', padding: 15 }}
-        data={this.contracts}
+        data={this.contracts.filter(contract => !contract.isFinished)}
         refreshing={this.isLoading}
         keyExtractor={(item, index) => index.toString()}
         onRefresh={() => this.init()}

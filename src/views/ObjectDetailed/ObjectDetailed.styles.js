@@ -44,9 +44,12 @@ export const Option = styled.Text`
   font-size: 12px;
 `;
 
-export const WebViewWrapper = styled.View`
-  flex: 1;
+export const MapImageWrapper = styled.View`
+  width: 100%;
   height: 300px;
-  padding-right: 10px;
-  padding-bottom: 10px;
+`;
+
+export const MapImage = styled.Image`
+  width: 100%;
+  height: 100%;
 `;

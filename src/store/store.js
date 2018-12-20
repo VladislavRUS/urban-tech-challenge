@@ -1,32 +1,28 @@
 import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
 
-const API_HOST = 'http://192.168.0.13:5000';
+const API_HOST = 'http://192.168.0.189:5000';
 // const API_HOST = 'http://localhost:5000';
 const UPLOAD_FILE = '/api/mobile/22/attaches';
-const GET_CONTRACTS = '/api/users/{userId}/contracts';
-const FINISH = '/api/contracts/finish';
+const GET_COMBINATIONS = '/api/combinations';
+const FINISH = '/api/contracts/{contractId}/finish';
+const ATTACH = '/api/attach';
 
 export const ATTACH_TYPES = {
   IMAGE: 'image',
-  AUDIO: 'audio'
+  AUDIO: 'audio',
+  COMMENT: 'comment'
 };
 
-const CheckObject = types.model({
-  id: types.number,
-  customer: types.string,
-  address: types.string,
-  expirationDate: types.string,
-  subject: types.string
-});
-
 const Attach = types.model({
-  id: types.number,
+  id: types.string,
   type: types.string,
-  url: types.string
+  data: types.string,
+  contractId: types.string
 });
 
 const Contract = types.model({
+  id: types.string,
   number: types.string,
   customer: types.string,
   subject: types.string,
@@ -35,15 +31,15 @@ const Contract = types.model({
   address: types.maybe(types.string),
   latitude: types.string,
   longitude: types.string,
-  expirationDate: types.string
+  expirationDate: types.string,
+  hide: types.maybe(types.boolean),
+  isFinished: types.maybe(types.boolean),
+  attaches: types.maybe(types.array(Attach))
 });
 
 const Store = types
   .model({
-    currentObjectId: types.maybe(types.number),
-    objects: types.maybe(types.array(CheckObject)),
-    attaches: types.maybe(types.array(Attach)),
-    comment: types.maybe(types.string),
+    currentObjectId: types.maybe(types.string),
     contracts: types.maybe(types.array(Contract)),
     userId: types.maybe(types.string)
   })
@@ -51,14 +47,27 @@ const Store = types
     setCurrentObjectId(id) {
       self.currentObjectId = id;
     },
-    saveComment(comment) {
-      self.comment = comment;
-    },
     getContracts: flow(function*() {
-      const url = API_HOST + GET_CONTRACTS.replace('{userId}', self.userId);
+      const url = API_HOST + GET_COMBINATIONS;
 
       const response = yield axios.get(url);
-      const contracts = response.data;
+      const combinations = response.data;
+
+      if (!combinations) {
+        return;
+      }
+
+      const userCombination = combinations.find(
+        combination => combination.user.id === self.userId
+      );
+
+      if (!userCombination) {
+        return;
+      }
+
+      const contracts = userCombination.contracts.filter(
+        contract => !contract.isFinished
+      );
 
       Store.contracts = contracts.map(contract =>
         Contract.create({ ...contract, cost: contract.cost.toString() })
@@ -88,44 +97,65 @@ const Store = types
 
       yield fetch(url, options);
     }),
-    finish: flow(function*(contract, status) {
-      const url = API_HOST + FINISH;
+    saveComment: flow(function*(comment) {
+      const url = API_HOST + ATTACH;
 
       const data = {
-        contract,
-        status
+        contractId: self.currentObjectId,
+        data: comment,
+        type: ATTACH_TYPES.COMMENT
       };
 
-      console.log(contract);
+      yield axios.post(url, {
+        ...data
+      });
+
+      yield self.getContracts();
+    }),
+    finish: flow(function*(contract, status) {
+      const url = API_HOST + FINISH.replace('{contractId}', contract.id);
+
+      const data = {
+        status,
+        userId: self.userId
+      };
 
       yield axios.post(url, {
-        data
+        ...data
       });
     })
   }))
+  .views(self => ({
+    get currentObject() {
+      return self.contracts.find(
+        contract => contract.id === self.currentObjectId
+      );
+    },
+    get comment() {
+      if (self.currentObject) {
+        const commentAttach = self.currentObject.attaches.find(
+          attach => attach.type === ATTACH_TYPES.COMMENT
+        );
+
+        if (commentAttach) {
+          return commentAttach.data;
+        }
+      }
+
+      return '';
+    },
+    get attaches() {
+      if (self.currentObject) {
+        const attaches = self.currentObject.attaches;
+
+        return attaches.filter(attach => attach.type !== ATTACH_TYPES.COMMENT);
+      }
+
+      return [];
+    }
+  }))
   .create({
-    objects: [
-      {
-        id: 1,
-        customer: 'ГУП «Я взял твою бу»',
-        expirationDate: '02.02.2019',
-        address: 'ул. Большая Акиманка, 19',
-        subject:
-          'Нужно проверить что-то там где-то там.\n' +
-          'Этот текст может занимать сколько угодно\n' +
-          'места, поместится всё!'
-      }
-    ],
-    attaches: [
-      {
-        id: 1,
-        type: ATTACH_TYPES.IMAGE,
-        url:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kitten_in_Rizal_Park%2C_Manila.jpg/230px-Kitten_in_Rizal_Park%2C_Manila.jpg'
-      }
-    ],
-    comment: 'Это мой супер коммент',
-    userId: '123qwe'
+    userId: '1'
   });
 
 export default Store;

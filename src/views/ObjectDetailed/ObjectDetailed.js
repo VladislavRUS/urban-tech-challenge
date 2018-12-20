@@ -1,16 +1,16 @@
 import React from 'react';
 import {
-  Wrapper,
-  Header,
   Body,
-  MarkerWrapper,
-  SubjectTitle,
-  Subject,
   DetailWrapper,
+  Header,
+  MapImage,
+  MapImageWrapper,
+  MarkerWrapper,
   Option,
-  WebViewWrapper
+  Subject,
+  SubjectTitle,
+  Wrapper
 } from './ObjectDetailed.styles';
-import { WebView } from 'react-native';
 import Store from '../../store';
 import Card from '../../components/Card';
 import Marker from '../../components/Marker';
@@ -24,7 +24,6 @@ import * as Routes from '../../constants/routes';
 import Button from '../../components/Button';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet';
 import { observer } from 'mobx-react';
-import  { html } from './html';
 
 const options = [
   'Замечаний не обнаружено',
@@ -65,10 +64,14 @@ class ObjectDetailed extends React.Component {
   isLoading = false;
   @observable
   actionSheet = null;
+  @observable
+  mapVisible = false;
 
   componentDidMount() {
     const { navigation } = this.props;
     navigation.setParams({ title: this.object.customer });
+
+    this.mapVisible = true;
   }
 
   handleRef = element => {
@@ -89,6 +92,12 @@ class ObjectDetailed extends React.Component {
 
   onEndPress = () => {
     this.actionSheet.show();
+  };
+
+  imageUrl = () => {
+    return `https://image.maps.api.here.com/mia/1.6/routing?app_id=0zD1aVA8ZeJNMdQ72J7w&app_code=No96dAT7fCZufouKU6-4bw&waypoint0=55.763564,37.654062&waypoint1=${
+      this.object.latitude
+    },${this.object.longitude}`;
   };
 
   onActionSheet = async index => {
@@ -116,26 +125,21 @@ class ObjectDetailed extends React.Component {
 
   render() {
     const { object } = this;
+    if (!object) {
+      return null;
+    }
 
-    const htmlWithCoords = html
-      .replace('$marker.latitude', this.object.latitude)
-      .replace('$marker.longitude', this.object.longitude)
-      .replace('{secondLatitude}', this.object.latitude)
-      .replace('{secondLongitude}', this.object.longitude);
-
-      console.log(this.object);
-      
     return (
-      <Wrapper contentContainerStyle={{paddingBottom: 30}}>
+      <Wrapper contentContainerStyle={{ paddingBottom: 30 }}>
         {this.object && (
           <Card activeOpacity={1}>
-          <WebViewWrapper>
-            <WebView 
-                originWhitelist={['*']}
-                style={{ width: '100%', height: '100%' }} 
-                source={{ html: htmlWithCoords }}/>
-          </WebViewWrapper>
-            
+            <MapImageWrapper>
+              <MapImage
+                resizeMode={'stretch'}
+                source={{ uri: this.imageUrl() }}
+              />
+            </MapImageWrapper>
+
             <Header>
               <MarkerWrapper>
                 <Marker
@@ -178,8 +182,6 @@ class ObjectDetailed extends React.Component {
                 onPress={this.onEndPress}
               />
             </Body>
-
-            
           </Card>
         )}
 

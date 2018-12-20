@@ -27,9 +27,9 @@ class Auth extends React.Component {
   @observable
   loaderTimeout = null;
   @observable
-  login = 'kurochkin@gku.ru';
+  login = 'frontguys@gku.ru';
   @observable
-  password = 'qwerty';
+  password = '*****';
   @observable
   isLoading = false;
 
@@ -47,7 +47,7 @@ class Auth extends React.Component {
     this.loaderTimeout = setTimeout(() => {
       const { navigation } = this.props;
       navigation.navigate(Routes.MAIN_NAVIGATOR);
-    }, 1000);
+    }, 100);
   };
 
   componentWillUnmount() {
@@ -73,7 +73,6 @@ class Auth extends React.Component {
             </FormElementWrapper>
             <FormElementWrapper>
               <Input
-                secureTextEntry={true}
                 placeholder={'Введите пароль'}
                 icon={lockIcon}
                 value={this.password}

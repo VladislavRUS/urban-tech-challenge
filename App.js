@@ -32,7 +32,7 @@ const TasksNavigator = createStackNavigator({
 });
 
 TasksNavigator.navigationOptions = ({ navigation }) => ({
-  title: 'Задачи'
+  title: 'Проверка'
 });
 
 const MainNavigator = createBottomTabNavigator(
@@ -41,7 +41,13 @@ const MainNavigator = createBottomTabNavigator(
     TasksNavigator
   },
   {
-    initialRouteName: Routes.TASKS_NAVIGATOR
+    initialRouteName: Routes.TASKS_NAVIGATOR,
+    tabBarOptions: {
+      activeTintColor: 'red',
+      labelStyle: {
+        marginBottom: 15
+      }
+    }
   }
 );
 
@@ -49,7 +55,7 @@ const createNavigator = () =>
   createSwitchNavigator(
     { AuthNavigator, MainNavigator },
     {
-      initialRouteName: Routes.MAIN_NAVIGATOR
+      initialRouteName: Routes.AUTH_NAVIGATOR
     }
   );
 

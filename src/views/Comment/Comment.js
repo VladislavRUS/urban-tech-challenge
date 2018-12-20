@@ -29,10 +29,11 @@ class Comment extends React.Component {
 
   componentDidMount() {
     this.comment = Store.comment;
+    console.log(Store.currentObject.attaches);
   }
 
-  onSave = () => {
-    Store.saveComment(this.comment);
+  onSave = async () => {
+    await Store.saveComment(this.comment);
     const { navigation } = this.props;
 
     navigation.goBack();
