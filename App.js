@@ -6,9 +6,9 @@ import {
 } from 'react-navigation';
 import Auth from './src/views/Auth';
 import Profile from './src/views/Profile';
-import Objects from './src/views/Objects';
+import Contracts from './src/views/Contracts';
 import * as Routes from './src/constants/routes';
-import ObjectDetailed from './src/views/ObjectDetailed';
+import ContractDetailed from './src/views/ContractDetailed';
 import Comment from './src/views/Comment';
 import Attaches from './src/views/Attaches';
 
@@ -25,8 +25,8 @@ ProfileNavigator.navigationOptions = ({ navigation }) => ({
 });
 
 const TasksNavigator = createStackNavigator({
-  Objects,
-  ObjectDetailed,
+  Contracts,
+  ContractDetailed,
   Comment,
   Attaches
 });

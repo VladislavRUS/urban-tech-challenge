@@ -15,6 +15,7 @@ import Button from '../../components/Button';
 import lockIcon from '../../assets/icons/lock.png';
 import userIcon from '../../assets/icons/user.png';
 import moscowImage from '../../assets/images/moscow.png';
+import Store from '../../store';
 
 import * as Routes from '../../constants/routes';
 
@@ -41,13 +42,13 @@ class Auth extends React.Component {
     console.log(text);
   };
 
-  onSubmit = () => {
+  onSubmit = async () => {
     this.isLoading = true;
 
-    this.loaderTimeout = setTimeout(() => {
-      const { navigation } = this.props;
-      navigation.navigate(Routes.MAIN_NAVIGATOR);
-    }, 100);
+    await Store.getUsers();
+
+    const { navigation } = this.props;
+    navigation.navigate(Routes.MAIN_NAVIGATOR);
   };
 
   componentWillUnmount() {

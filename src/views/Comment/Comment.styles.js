@@ -6,6 +6,7 @@ export const Wrapper = styled.View`
 `;
 
 export const TextInputWrapper = styled.View`
+  flex: 1;
   padding: 15px;
   ${{ borderBottomWidth: 1 }};
   ${{ borderBottomColor: '#dedede' }};

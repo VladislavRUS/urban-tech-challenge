@@ -10,7 +10,7 @@ import {
   Subject,
   SubjectTitle,
   Wrapper
-} from './ObjectDetailed.styles';
+} from './ContractDetailed.styles';
 import Store from '../../store';
 import Card from '../../components/Card';
 import Marker from '../../components/Marker';
@@ -29,7 +29,7 @@ const options = [
   'Замечаний не обнаружено',
   'Работы не выполнены',
   'Работы не выполнены в полном объеме',
-  'Нарушение сроко выполнения работ',
+  'Нарушение сроков выполнения работ',
   'Неправомерное изменение условий контракта',
   'Начато ведение работ до заключение контракта',
   'Некачественное выполнение работ',
@@ -39,7 +39,7 @@ const options = [
 const CANCEL_BUTTON_INDEX = 7;
 
 @observer
-class ObjectDetailed extends React.Component {
+class ContractDetailed extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const title = navigation.getParam('title', '');
 
@@ -56,22 +56,18 @@ class ObjectDetailed extends React.Component {
   };
 
   @computed
-  get object() {
-    return Store.contracts.find(object => object.id === Store.currentObjectId);
+  get contract() {
+    return Store.currentContract;
   }
 
   @observable
   isLoading = false;
   @observable
   actionSheet = null;
-  @observable
-  mapVisible = false;
 
   componentDidMount() {
     const { navigation } = this.props;
-    navigation.setParams({ title: this.object.customer });
-
-    this.mapVisible = true;
+    navigation.setParams({ title: this.contract.customer });
   }
 
   handleRef = element => {
@@ -96,8 +92,8 @@ class ObjectDetailed extends React.Component {
 
   imageUrl = () => {
     return `https://image.maps.api.here.com/mia/1.6/routing?app_id=0zD1aVA8ZeJNMdQ72J7w&app_code=No96dAT7fCZufouKU6-4bw&waypoint0=55.763564,37.654062&waypoint1=${
-      this.object.latitude
-    },${this.object.longitude}`;
+      this.contract.latitude
+    },${this.contract.longitude}`;
   };
 
   onActionSheet = async index => {
@@ -108,7 +104,7 @@ class ObjectDetailed extends React.Component {
     this.isLoading = true;
 
     try {
-      await Store.finish(this.object, options[index]);
+      await Store.finish(this.contract, options[index]);
 
       const { navigation } = this.props;
 
@@ -124,66 +120,67 @@ class ObjectDetailed extends React.Component {
   };
 
   render() {
-    const { object } = this;
-    if (!object) {
+    const { contract } = this;
+
+    if (!contract) {
       return null;
     }
 
     return (
       <Wrapper contentContainerStyle={{ paddingBottom: 30 }}>
-        {this.object && (
-          <Card activeOpacity={1}>
-            <MapImageWrapper>
-              <MapImage
-                resizeMode={'stretch'}
-                source={{ uri: this.imageUrl() }}
-              />
-            </MapImageWrapper>
+        <Card activeOpacity={1}>
+          <MapImageWrapper>
+            <MapImage
+              resizeMode={'stretch'}
+              source={{ uri: this.imageUrl() }}
+            />
+          </MapImageWrapper>
 
-            <Header>
-              <MarkerWrapper>
-                <Marker
-                  icon={locationIcon}
-                  title={'Адрес'}
-                  text={object.address}
-                  color={'#c73433'}
-                />
-              </MarkerWrapper>
-              <MarkerWrapper>
-                <Marker
-                  icon={timeIcon}
-                  title={'Дата окончания'}
-                  text={object.expirationDate}
-                  color={'#69aa4f'}
-                />
-              </MarkerWrapper>
-            </Header>
-            <Body>
-              <SubjectTitle>Предмет проверки:</SubjectTitle>
-              <Subject>{object.subject}</Subject>
-              <DetailWrapper>
-                <Detail
-                  icon={commentIcon}
-                  text={'Ваш комментарий'}
-                  onPress={this.onComment}
-                />
-              </DetailWrapper>
-              <DetailWrapper>
-                <Detail
-                  icon={attachIcon}
-                  text={`Вложения (${Store.attaches.length})`}
-                  onPress={this.onAttach}
-                />
-              </DetailWrapper>
-              <Button
-                loading={this.isLoading}
-                text={'Завершить'}
-                color={'#69aa4f'}
-                onPress={this.onEndPress}
+          <Header>
+            <MarkerWrapper>
+              <Marker
+                icon={locationIcon}
+                width={8}
+                height={10}
+                title={'Адрес'}
+                text={contract.address}
+                color={'#c73433'}
               />
-            </Body>
-          </Card>
-        )}
+            </MarkerWrapper>
+            <MarkerWrapper>
+              <Marker
+                icon={timeIcon}
+                title={'Дата окончания'}
+                text={contract.expirationDate}
+                color={'#69aa4f'}
+              />
+            </MarkerWrapper>
+          </Header>
+          <Body>
+            <SubjectTitle>Предмет проверки:</SubjectTitle>
+            <Subject>{contract.subject}</Subject>
+            <DetailWrapper>
+              <Detail
+                icon={commentIcon}
+                text={'Ваш комментарий'}
+                onPress={this.onComment}
+              />
+            </DetailWrapper>
+            <DetailWrapper>
+              <Detail
+                icon={attachIcon}
+                text={`Вложения (${Store.attaches.length})`}
+                onPress={this.onAttach}
+              />
+            </DetailWrapper>
+            <Button
+              loading={this.isLoading}
+              text={'Завершить'}
+              color={'#69aa4f'}
+              onPress={this.onEndPress}
+            />
+          </Body>
+        </Card>
 
         <ActionSheet
           ref={this.handleRef}
@@ -199,4 +196,4 @@ class ObjectDetailed extends React.Component {
   }
 }
 
-export default ObjectDetailed;
+export default ContractDetailed;

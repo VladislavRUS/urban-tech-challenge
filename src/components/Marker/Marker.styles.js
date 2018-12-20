@@ -24,8 +24,8 @@ export const IconBackgroundWrapper = styled.View`
 `;
 
 export const IconWrapper = styled.View`
-  width: 10px;
-  height: 10px;
+  width: ${props => props.width || '10'}px;
+  height: ${props => props.height || '10'}px;
 `;
 
 export const Icon = styled.Image`

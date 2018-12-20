@@ -1,12 +1,13 @@
 import { types, flow } from 'mobx-state-tree';
 import axios from 'axios';
 
-const API_HOST = 'http://192.168.0.189:5000';
-// const API_HOST = 'http://localhost:5000';
-const UPLOAD_FILE = '/api/mobile/22/attaches';
+export const API_HOST = 'http://192.168.0.189:5000';
+const ATTACH_FILE = '/api/contracts/{contractId}/attachFile';
 const GET_COMBINATIONS = '/api/combinations';
+const GET_USERS = '/api/users';
 const FINISH = '/api/contracts/{contractId}/finish';
 const ATTACH = '/api/attach';
+const DEMO_USER_ID = '1';
 
 export const ATTACH_TYPES = {
   IMAGE: 'image',
@@ -37,16 +38,65 @@ const Contract = types.model({
   attaches: types.maybe(types.array(Attach))
 });
 
+const User = types.model({
+  id: types.string,
+  firstName: types.string,
+  lastName: types.string,
+  patronymic: types.string,
+  avatar: types.string,
+  latitude: types.number,
+  longitude: types.number
+});
+
 const Store = types
   .model({
-    currentObjectId: types.maybe(types.string),
-    contracts: types.maybe(types.array(Contract)),
-    userId: types.maybe(types.string)
+    currentContractId: types.maybe(types.string),
+    user: types.maybe(User),
+    contracts: types.maybe(types.array(Contract))
   })
-  .actions(self => ({
-    setCurrentObjectId(id) {
-      self.currentObjectId = id;
+  .views(self => ({
+    get currentContract() {
+      return self.contracts.find(
+        contract => contract.id === self.currentContractId
+      );
     },
+    get comment() {
+      if (self.currentContract) {
+        const commentAttach = self.currentContract.attaches.find(
+          attach => attach.type === ATTACH_TYPES.COMMENT
+        );
+
+        if (commentAttach) {
+          return commentAttach.data;
+        }
+      }
+
+      return '';
+    },
+    get attaches() {
+      if (self.currentContract) {
+        const attaches = self.currentContract.attaches;
+
+        return attaches.filter(attach => attach.type !== ATTACH_TYPES.COMMENT);
+      }
+
+      return [];
+    },
+    get images() {
+      return self.attaches.filter(attach => attach.type === ATTACH_TYPES.IMAGE);
+    }
+  }))
+  .actions(self => ({
+    setCurrentContractId(id) {
+      self.currentContractId = id;
+    },
+    getUsers: flow(function*() {
+      const url = API_HOST + GET_USERS;
+
+      const { data } = yield axios.get(url);
+
+      self.user = data.find(user => user.id === DEMO_USER_ID);
+    }),
     getContracts: flow(function*() {
       const url = API_HOST + GET_COMBINATIONS;
 
@@ -58,7 +108,7 @@ const Store = types
       }
 
       const userCombination = combinations.find(
-        combination => combination.user.id === self.userId
+        combination => combination.user.id === self.user.id
       );
 
       if (!userCombination) {
@@ -74,7 +124,8 @@ const Store = types
       );
     }),
     uploadImage: flow(function*({ uri }) {
-      const url = API_HOST + UPLOAD_FILE;
+      const url =
+        API_HOST + ATTACH_FILE.replace('{contractId}', self.currentContract.id);
 
       let uriParts = uri.split('.');
       let fileType = uriParts[uriParts.length - 1];
@@ -101,7 +152,7 @@ const Store = types
       const url = API_HOST + ATTACH;
 
       const data = {
-        contractId: self.currentObjectId,
+        contractId: self.currentContractId,
         data: comment,
         type: ATTACH_TYPES.COMMENT
       };
@@ -117,45 +168,23 @@ const Store = types
 
       const data = {
         status,
-        userId: self.userId
+        userId: self.user.id
       };
 
       yield axios.post(url, {
         ...data
       });
+    }),
+    removePhoto: flow(function*(attach) {
+      const url =
+        API_HOST +
+        ATTACH_FILE.replace('{contractId}', self.currentContract.id) +
+        '/' +
+        attach.id;
+
+      yield axios.delete(url);
     })
   }))
-  .views(self => ({
-    get currentObject() {
-      return self.contracts.find(
-        contract => contract.id === self.currentObjectId
-      );
-    },
-    get comment() {
-      if (self.currentObject) {
-        const commentAttach = self.currentObject.attaches.find(
-          attach => attach.type === ATTACH_TYPES.COMMENT
-        );
-
-        if (commentAttach) {
-          return commentAttach.data;
-        }
-      }
-
-      return '';
-    },
-    get attaches() {
-      if (self.currentObject) {
-        const attaches = self.currentObject.attaches;
-
-        return attaches.filter(attach => attach.type !== ATTACH_TYPES.COMMENT);
-      }
-
-      return [];
-    }
-  }))
-  .create({
-    userId: '1'
-  });
+  .create();
 
 export default Store;

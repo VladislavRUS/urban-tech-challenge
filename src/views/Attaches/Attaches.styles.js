@@ -40,6 +40,7 @@ export const Title = styled.Text`
 `;
 
 export const Actions = styled.TouchableOpacity`
+  padding: 5px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -61,4 +62,29 @@ export const PlusIconWrapper = styled.View`
 export const PlusIcon = styled.Image`
   width: 100%;
   height: 100%;
+`;
+
+export const Images = styled.View`
+  margin-top: 20px;
+  display: flex;
+`;
+
+export const Row = styled.View`
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+`;
+
+export const Image = styled.Image`
+  width: 60px;
+  height: 35px;
+`;
+
+export const DeleteImage = styled.TouchableOpacity`
+  margin-left: auto;
+`;
+
+export const DeleteText = styled.Text`
+  padding: 10px 7px 10px 10px;
+  font-size: 16px;
 `;

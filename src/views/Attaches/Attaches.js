@@ -9,15 +9,22 @@ import {
   Actions,
   ActionTitle,
   PlusIconWrapper,
-  PlusIcon
+  PlusIcon,
+  Row,
+  Images,
+  Image,
+  DeleteImage,
+  DeleteText
 } from './Attaches.styles';
 import { ImagePicker, Permissions } from 'expo';
 import Card from '../../components/Card';
 import plusIcon from '../../assets/icons/plus.png';
 import photoIcon from '../../assets/icons/photo.png';
 import micIcon from '../../assets/icons/mic.png';
-import Store from '../../store';
+import Store, { API_HOST } from '../../store';
+import { observer } from 'mobx-react';
 
+@observer
 class Attaches extends React.Component {
   static navigationOptions = {
     title: 'Вложения',
@@ -31,20 +38,34 @@ class Attaches extends React.Component {
   };
 
   onAddPhoto = async () => {
-    let granted = false;
+    let cameraRollGranted = false;
+    let cameraGranted = false;
 
-    const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    const cameraRollPermission = await Permissions.getAsync(
+      Permissions.CAMERA_ROLL
+    );
 
-    if (permission.status !== 'granted') {
+    if (cameraRollPermission.status !== 'granted') {
       const newPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (newPermission.status === 'granted') {
-        granted = true;
+        cameraRollGranted = true;
       }
     } else {
-      granted = true;
+      cameraRollGranted = true;
     }
 
-    if (granted) {
+    const cameraPermission = await Permissions.getAsync(Permissions.CAMERA);
+
+    if (cameraPermission.status !== 'granted') {
+      const newPermission = await Permissions.askAsync(Permissions.CAMERA);
+      if (newPermission.status === 'granted') {
+        cameraGranted = true;
+      }
+    } else {
+      cameraGranted = true;
+    }
+
+    if (cameraGranted && cameraRollGranted) {
       this.takePhoto();
     }
   };
@@ -54,7 +75,17 @@ class Attaches extends React.Component {
       allowsEditing: false
     });
 
-    Store.uploadImage(result);
+    try {
+      await Store.uploadImage(result);
+    } catch (e) {
+    } finally {
+      await Store.getContracts();
+    }
+  };
+
+  onRemovePhoto = async photo => {
+    await Store.removePhoto(photo);
+    await Store.getContracts();
   };
 
   render() {
@@ -74,6 +105,19 @@ class Attaches extends React.Component {
                 </PlusIconWrapper>
               </Actions>
             </Header>
+            <Images>
+              {Store.images.map((imageAttach, idx) => (
+                <Row key={idx}>
+                  <Image
+                    resizeMode={'cover'}
+                    source={{ uri: API_HOST + '/' + imageAttach.data }}
+                  />
+                  <DeleteImage onPress={() => this.onRemovePhoto(imageAttach)}>
+                    <DeleteText>X</DeleteText>
+                  </DeleteImage>
+                </Row>
+              ))}
+            </Images>
           </Section>
           <Section>
             <Header>

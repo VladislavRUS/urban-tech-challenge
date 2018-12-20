@@ -14,7 +14,7 @@ const Marker = props => (
   <Wrapper>
     <Header>
       <IconBackgroundWrapper color={props.color}>
-        <IconWrapper>
+        <IconWrapper width={props.width} height={props.height}>
           <Icon source={props.icon} resizeMode={'contain'} />
         </IconWrapper>
       </IconBackgroundWrapper>

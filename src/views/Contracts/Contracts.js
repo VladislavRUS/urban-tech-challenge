@@ -1,6 +1,6 @@
 import React from 'react';
-import { ObjectWrapper, List } from './Objects.styles';
-import ObjectItem from './ObjectItem';
+import { List, ListItem } from './Contracts.styles';
+import Contract from './Contract';
 import * as Routes from '../../constants/routes';
 import Store from '../../store';
 import { computed, observable } from 'mobx';
@@ -47,12 +47,12 @@ class Objects extends React.Component {
     }
   };
 
-  onPress = object => {
+  onPress = contract => {
     const { navigation } = this.props;
 
-    Store.setCurrentObjectId(object.id);
+    Store.setCurrentContractId(contract.id);
 
-    navigation.navigate(Routes.OBJECT_DETAILED, {
+    navigation.navigate(Routes.CONTRACT_DETAILED, {
       onGoBack: this.init
     });
   };
@@ -66,14 +66,14 @@ class Objects extends React.Component {
         keyExtractor={(item, index) => index.toString()}
         onRefresh={() => this.init()}
         renderItem={({ item }) => (
-          <ObjectWrapper>
-            <ObjectItem
+          <ListItem>
+            <Contract
               onPress={() => this.onPress(item)}
               customer={item.customer}
               address={item.address}
               expirationDate={item.expirationDate}
             />
-          </ObjectWrapper>
+          </ListItem>
         )}
       />
     );

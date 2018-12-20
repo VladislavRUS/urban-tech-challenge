@@ -26,23 +26,24 @@ class Comment extends React.Component {
 
   @observable
   comment = '';
+  @observable
+  isLoading = false;
 
   componentDidMount() {
+    Store.getContracts();
     this.comment = Store.comment;
-    console.log(Store.currentObject.attaches);
   }
 
   onSave = async () => {
+    this.isLoading = true;
     await Store.saveComment(this.comment);
-    const { navigation } = this.props;
-
-    navigation.goBack();
+    this.isLoading = false;
   };
 
   render() {
     return (
       <Wrapper>
-        <Card activeOpacity={1}>
+        <Card activeOpacity={1} fullSize={true}>
           <TextInputWrapper>
             <TextInput
               numberOfLines={3}
@@ -55,6 +56,7 @@ class Comment extends React.Component {
           </TextInputWrapper>
           <ButtonWrapper>
             <Button
+              loading={this.isLoading}
               text={'Сохранить'}
               color={'#69aa4f'}
               onPress={this.onSave}

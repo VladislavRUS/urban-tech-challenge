@@ -6,12 +6,12 @@ import {
   Body,
   MarkerWrapper,
   Forward
-} from './ObjectItem.styles';
+} from './Contract.styles';
 import Marker from '../../../components/Marker';
 import locationIcon from '../../../assets/icons/location.png';
 import timeIcon from '../../../assets/icons/time.png';
 
-const ObjectItem = props => (
+const Contract = props => (
   <Card onPress={props.onPress}>
     <Header>
       <HeaderText>{props.customer}</HeaderText>
@@ -19,6 +19,8 @@ const ObjectItem = props => (
     <Body>
       <MarkerWrapper>
         <Marker
+          width={8}
+          height={10}
           icon={locationIcon}
           title={'Адрес'}
           text={props.address}
@@ -38,4 +40,4 @@ const ObjectItem = props => (
   </Card>
 );
 
-export default ObjectItem;
+export default Contract;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ObjectWrapper = styled.View`
+export const ListItem = styled.View`
   margin-bottom: 15px;
 `;
 
